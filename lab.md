@@ -1,7 +1,7 @@
 
 
 ```powershell
-#Ref:  Set up a NAT network | Microsoft Docs![image](https://user-images.githubusercontent.com/21128234/184476599-d948f84f-d15c-4eee-b96c-42fc6d64acd6.png)
+#Ref:  Set up a NAT network : https://docs.microsoft.com/en-us/virtualization/hyper-v-on-windows/user-guide/setup-nat-network
 New-VMSwitch -SwitchName "NAT" -SwitchType Internal
 Get-NetAdapter
 New-NetIPAddress -IPAddress 172.30.0.1 -PrefixLength 24 -InterfaceIndex 24 
