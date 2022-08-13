@@ -60,7 +60,7 @@ $code = {
 netsh int ip set address "ethernet" static 172.30.0.10 255.255.255.0 172.30.0.1 1
 netsh interface ipv4 add dnsserver name=Ethernet address=172.30.0.10 index=1 validate=no
 netsh interface ipv4 add dnsserver name=Ethernet address=8.8.8.8 index=2 validate=no
-Rename-Computer $vm -Force -Restart
+Rename-Computer DC01 -Force -Restart
 Exit
 }
 Start-Sleep -Seconds 10
