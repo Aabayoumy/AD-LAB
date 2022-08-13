@@ -47,3 +47,53 @@ Enable-VMIntegrationService -VMName $vm "Guest Service Interface"
 ```
 #### Start new created VM and install windows with Full Desktop option & set administrator passsword to P@ssw0rd!
 
+### Install Active Directory on DC01 VM 
+```powershell
+$plainPassword = "P@ssw0rd"
+$password = $plainPassword | ConvertTo-SecureString -asPlainText -Force
+$credential = New-Object System.Management.Automation.PSCredential("administrator", $password)
+$vm = "DC01"
+
+Write-Host "Set the network confugration , HostName and restart"
+$session = New-PSSession -Vmname $vm -Credential $credential -Verbose
+$code = {
+netsh int ip set address "ethernet" static 172.30.0.10 255.255.255.0 172.30.0.1 1
+netsh interface ipv4 add dnsserver name=Ethernet address=172.30.0.10 index=1 validate=no
+netsh interface ipv4 add dnsserver name=Ethernet address=8.8.8.8 index=2 validate=no
+Rename-Computer $vm -Force -Restart
+Exit
+}
+Invoke-Command -Session $session -ScriptBlock $code
+while((Get-VM -Name $vm).HeartBeat -notlike  'Ok*')
+{Start-Sleep -Seconds 10}
+Write-host $((Get-VM -Name $vm).HeartBeat)
+$session = New-PSSession -Vmname $vm -Credential $credential -Verbose
+$code = {
+ $plainPassword = "P@ssw0rd"
+ $password = $plainPassword | ConvertTo-SecureString -asPlainText -Force
+ $credential = New-Object System.Management.Automation.PSCredential("administrator", $password)
+$domainName = "contoso"
+ $domain = "$domainName.local"
+Write-Host "Installing management tools"
+ Import-Module ServerManager
+ Add-WindowsFeature RSAT-AD-PowerShell,RSAT-AD-AdminCenter
+Write-Host "Deploying Active Directory Domain..."
+ Install-WindowsFeature AD-domain-services, DNS -IncludeAllSubFeature -IncludeManagementTools -Restart
+ Import-Module ADDSDeployment
+ Install-ADDSForest `
+ -SafeModeAdministratorPassword $password `
+ -CreateDnsDelegation:$false `
+ -DatabasePath "C:\Windows\NTDS" `
+ -DomainMode "7" `
+ -DomainName $domain `
+ -DomainNetbiosName $domainName `
+ -ForestMode "7" `
+ -InstallDns:$true `
+ -LogPath "C:\Windows\NTDS" `
+ -NoRebootOnCompletion:$true `
+ -SysvolPath "C:\Windows\SYSVOL" `
+ -Force:$true
+Restart-Computer -Force -Verbose
+}
+Invoke-Command -Session $session -ScriptBlock $code
+```
