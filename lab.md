@@ -1,12 +1,14 @@
 
-## Set up a NAT network : https://docs.microsoft.com/en-us/virtualization/hyper-v-on-windows/user-guide/setup-nat-network
+### Set up a NAT network 
+https://docs.microsoft.com/en-us/virtualization/hyper-v-on-windows/user-guide/setup-nat-network
 ```powershell
 New-VMSwitch -SwitchName "NAT" -SwitchType Internal
 Get-NetAdapter
 New-NetIPAddress -IPAddress 172.30.0.1 -PrefixLength 24 -InterfaceIndex 24 
 New-NetNat -Name NAT17230 -InternalIPInterfaceAddressPrefix 172.30.0.0/24
 ```
-## Create DC01 VM https://dev.to/joeneville_/automate-hyper-v-vm-creation-with-powershell-1fgc
+### Create DC01 VM 
+https://dev.to/joeneville_/automate-hyper-v-vm-creation-with-powershell-1fgc
 ```powershell
 # This script is in two parts. First we declare the variables to be applied.
 $vm = "DC01" # name of VM, this just applies in Windows, it isn't applied to the OS guest itself.
@@ -43,5 +45,5 @@ Set-VM -Name $vm -CheckpointType Disabled
 Disable-VMIntegrationService -VMName $vm "Time Synchronization"
 Enable-VMIntegrationService -VMName $vm "Guest Service Interface"
 ```
-### Start new created VM and install windows with Full Desktop option & set administrator passsword to P@ssw0rd!
+#### Start new created VM and install windows with Full Desktop option & set administrator passsword to P@ssw0rd!
 
