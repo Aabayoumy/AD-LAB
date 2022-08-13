@@ -63,7 +63,7 @@ netsh interface ipv4 add dnsserver name=Ethernet address=8.8.8.8 index=2 validat
 Rename-Computer DC01 -Force -Restart
 Exit
 }
-Start-Sleep -Seconds 10
+Start-Sleep -Seconds 30
 Invoke-Command -Session $session -ScriptBlock $code
 while((Get-VM -Name $vm).HeartBeat -notlike  'Ok*')
 {Start-Sleep -Seconds 10}
